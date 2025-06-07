@@ -20,18 +20,21 @@ Zakres:
 Projekt_PRIR/
 ├── Dockerfile
 ├── docker-compose.yml
-│
-│ ├── engine/
-│ ├── Dockerfile
-│ ├── requirements.txt
-│ ├── engine_api.py
-│ └── scraper.py
-│ │ ├── flask_app/
-│ ├── Dockerfile
-│ ├── requirements.txt
-│ ├── app.py
-│ ├── static/
-│ │ └── css/ │ │ ├── style_index.css │ │ └── style_results.css │
-└── templates/
-│ ├── index.html │ └── results.html
+├── engine/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── engine_api.py
+│   └── scraper.py
+├── flask_app/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── app.py
+│   ├── static/
+│   │   └── css/
+│   │       ├── style_index.css
+│   │       └── style_results.css
+│   └── templates/
+│       ├── index.html
+│       └── results.html
+
    
