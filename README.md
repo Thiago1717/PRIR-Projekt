@@ -1,4 +1,4 @@
-# PRIR-Projekt
+![image](https://github.com/user-attachments/assets/1afeeede-3d1c-4be4-a0b3-7bfa1d4ddc9a)# PRIR-Projekt
 
 **Autorzy:**
 *   Oliwier Bogdański (21181)
@@ -18,24 +18,27 @@ Zakres:
 ---
 
 ## Struktura Projektu
-Projekt_PRIR/                     
-├── Dockerfile               
-├── docker-compose.yml    
-|    
-├── engine/                   
-│   ├── Dockerfile            
-│   ├── requirements.txt      
-│   ├── engine_api.py         
-│   └── scraper.py             
-│
-├── flask_app/                
-│   ├── Dockerfile            
-│   ├── requirements.txt      
-│   ├── app.py                
-│   ├── static/               
-│   │   └── css/
-│   │       ├── style_index.css
-│   │       └── style_results.css
-│   └── templates/            
-│       ├── index.html
-│       └── results.html
+## Struktura Projektu
+
+Struktura folderów projektu została zorganizowana w następujący sposób:
+
+-   `Projekt_PRIR/`
+    -   `Dockerfile` 
+    -   `docker-compose.yml`
+    -   `engine/`
+        -   `Dockerfile`
+        -   `requirements.txt`
+        -   `engine_api.py`
+        -   `scraper.py`
+    -   `flask_app/`
+        -   `Dockerfile`
+        -   `requirements.txt`
+        -   `app.py`
+        -   `static/`
+            -   `css/`
+                -   `style_index.css`
+                -   `style_results.css`
+        -   `templates/`
+            -   `index.html`
+            -   `results.html`
+   
