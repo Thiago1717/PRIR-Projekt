@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBay Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_index.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>eBay Scraper</h1>
+
+        <form id="scrapeForm">
+            <div>
+                <label for="query">Słowo kluczowe:</label>
+                <input type="text" id="query" name="query" placeholder="np. iPhone 15 Pro" required>
+            </div>
+            <div>
+                <label for="min_price">Cena minimalna ($):</label>
+                <input type="number" id="min_price" name="min_price" placeholder="np. 100" min="0" step="0.01">
+            </div>
+            <div>
+                <label for="max_price">Cena maksymalna ($):</label>
+                <input type="number" id="max_price" name="max_price" placeholder="np. 1000" min="0" step="0.01">
+            </div>
+            <div>
+                <label for="sort_order">Sortuj według ceny produktu:</label> 
+                <select id="sort_order" name="sort_order">
+                    <option value="price_asc">Rosnąco (cena produktu)</option> 
+                    <option value="price_desc" selected>Malejąco (cena produktu)</option> 
+                </select>
+            </div>            
+            <button type="submit" id="scrapeButton">Uruchom Scrapowanie</button>
+            <div class="loader" id="loader"></div>
+        </form>
+        
+        <div id="statusMessage" class="message"></div>
+
+        <div class="links">
+            <a id="resultsLink" href="{{ url_for('show_results') }}">Zobacz Wyniki</a>
+        </div>
+    </div>
+
+    <script>
+        const scrapeForm = document.getElementById('scrapeForm');
+        const scrapeButton = document.getElementById('scrapeButton');
+        const loader = document.getElementById('loader');
+        const statusMessageDiv = document.getElementById('statusMessage');
+        const queryInput = document.getElementById('query');
+        const minPriceInput = document.getElementById('min_price');
+        const maxPriceInput = document.getElementById('max_price');
+        const resultsLink = document.getElementById('resultsLink');
+
+        scrapeForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(scrapeForm);
+            const currentQuery = formData.get('query'); 
+            const minPriceStr = formData.get('min_price');
+            const maxPriceStr = formData.get('max_price');
+
+            if (!currentQuery.trim()) {
+                statusMessageDiv.textContent = 'Proszę podać słowo kluczowe.';
+                statusMessageDiv.className = 'message error';
+                statusMessageDiv.style.display = 'block';
+                return;
+            }
+
+            const minPrice = parseFloat(minPriceStr);
+            const maxPrice = parseFloat(maxPriceStr);
+
+            if (minPriceStr && maxPriceStr && !isNaN(minPrice) && !isNaN(maxPrice) && minPrice > maxPrice) {
+                statusMessageDiv.textContent = 'Cena minimalna nie może być wyższa niż cena maksymalna.';
+                statusMessageDiv.className = 'message error';
+                statusMessageDiv.style.display = 'block';
+                return;
+            }
+            if ((minPriceStr && parseFloat(minPriceStr) < 0) || (maxPriceStr && parseFloat(maxPriceStr) < 0)) {
+                statusMessageDiv.textContent = 'Ceny nie mogą być ujemne.';
+                statusMessageDiv.className = 'message error';
+                statusMessageDiv.style.display = 'block';
+                return;
+            }
+
+            const params = {
+                query: currentQuery,
+                min_price: minPriceStr || '', 
+                max_price: maxPriceStr || '', 
+                sort_order: formData.get('sort_order') 
+            };
+
+            scrapeButton.disabled = true;
+            loader.style.display = 'block';
+            statusMessageDiv.style.display = 'none';
+            statusMessageDiv.className = 'message'; 
+            statusMessageDiv.textContent = 'Rozpoczynam scrapowanie eBay...';
+            statusMessageDiv.classList.add('info');
+            statusMessageDiv.style.display = 'block';
+
+            fetch("{{ url_for('trigger_scrape') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify(params)
+            })
+            .then(response => { 
+                if (!response.ok) {
+                    return response.json().catch(() => {
+                        throw new Error(`Błąd HTTP: ${response.status} ${response.statusText}. Odpowiedź serwera nie była w formacie JSON lub była pusta.`);
+                    }).then(errorData => {
+                        throw new Error(errorData.message || `Błąd HTTP: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                let messageText = data.message || JSON.stringify(data);
+                if (data.ads_found !== undefined) {
+                    messageText += ` Znaleziono ogłoszeń: ${data.ads_found}.`;
+                }
+                statusMessageDiv.textContent = messageText;
+
+                if (data.status === 'success') {
+                    statusMessageDiv.className = 'message success';
+                    if (resultsLink && currentQuery) {
+                        // === POCZĄTEK ZMIANY DLA OPCJI 2 ===
+                        const currentSortOrder = document.getElementById('sort_order').value; 
+                        resultsLink.href = "{{ url_for('show_results') }}?query=" + encodeURIComponent(currentQuery) + "&sort=" + encodeURIComponent(currentSortOrder);
+                        // === KONIEC ZMIANY DLA OPCJI 2 ===
+                    }
+                } else {
+                    statusMessageDiv.className = 'message error';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                statusMessageDiv.textContent = 'Błąd: ' + error.message;
+                statusMessageDiv.className = 'message error';
+            })
+            .finally(() => {
+                loader.style.display = 'none';
+                statusMessageDiv.style.display = 'block';
+                scrapeButton.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

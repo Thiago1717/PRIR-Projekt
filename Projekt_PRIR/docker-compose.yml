@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  flask_ui:
+    build: ./flask_app
+    container_name: flask_ui_container
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo_db
+      - engine_app
+    environment:
+      - MONGO_URI=mongodb://mongo_db:27017/  
+      - ENGINE_URL=http://engine_app:5001/start-scraping
+      - FLASK_DEBUG=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./flask_app:/app_ui
+    networks:
+      - app_network
+
+  engine_app:
+    build: ./engine
+    container_name: engine_container
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo_db
+    environment:
+      - MONGO_URI=mongodb://mongo_db:27017/ 
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./engine:/app_engine
+    networks:
+      - app_network
+
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app_network
+
+volumes:
+  mongo_data:
+
+networks:
+  app_network:
+    driver: bridge

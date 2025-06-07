@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyniki Scrapowania eBay - {{ query | e if query else 'Wszystkie' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_results.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="back-link-container">
+            <a href="{{ url_for('index') }}" class="back-link">← Powrót do Wyszukiwania</a>
+        </div>
+        <h1>Wyniki dla: {{ query | e if query else 'N/A' }}</h1>
+
+        {% if db_error %}
+            <p class="error-message">Wystąpił błąd połączenia z bazą danych. Nie można wyświetlić wyników.</p>
+        {% elif ads %}
+            <p class="results-info">Znaleziono: <strong>{{ ads | length }}</strong> ofert.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tytuł</th>
+                        <th>Cena (tekst)</th>
+                        <th>Cena (numeryczna)</th>
+                        <th>Wysyłka</th>
+                        <th>Lokalizacja</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+                        <td>{{ ad.title | e }}</td>
+                        <td>{{ ad.price_text | e }}</td>
+                        <td>{{ ad.price_value if ad.price_value is not none else 'N/A' }}</td>
+                        <td>{{ ad.shipping_info | e }}</td>
+                        <td>{{ ad.location | e }}</td>
+                        <td><a href="{{ ad.link }}" target="_blank" title="{{ ad.link | e }}">Link do eBay</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-results">Brak danych do wyświetlenia dla zapytania "{{ query | e if query else 'nieznanego' }}". Uruchom scraper lub sprawdź, czy dla tego zapytania istnieją dane w bazie.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
