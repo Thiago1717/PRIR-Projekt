@@ -20,13 +20,24 @@ def start_scraping_endpoint():
         query, min_price, max_price, sort_order
     )
     
-    response_status = "success" if "success" in status_message.lower() else "error" 
+    if "pomyślnie" in status_message.lower():
+        response_status = "success"
+    elif "błąd zapisu do db" in status_message.lower() and result_items:
+        response_status = "partial_success" 
+    else:
+        response_status = "error"
     
+    http_status_code = 200
+    if response_status == "error":
+        http_status_code = 500
+    
+    print(f"ENGINE_API: Wiadomość z scrapera: '{status_message}', Ustalony status odpowiedzi: '{response_status}', Znaleziono ogłoszeń: {len(result_items)}")
+
     return jsonify({
         "status": response_status,
         "message": status_message,
         "ads_found": len(result_items),
-    }), 200 if response_status == "success" else 500
+    }), http_status_code
 
 if __name__ == '__main__':
     print("ENGINE_API: Uruchamianie serwera Flask API silnika na porcie 5001")
