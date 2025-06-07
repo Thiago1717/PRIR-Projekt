@@ -14,3 +14,27 @@ Zakres:
 7. Docelowo aplikacja ma być rozproszona na min 3 moduły: interfejs (1 lub więcej kontenerów), silnik (1 kontener), BD (1 kontener). Sposób ulokowania należy opracować we własnym zakresie i potrafić uzasadnić wybory.
 8. Oprogramowanie może być zrealizowane w grupie 1 lub 2 osobowej. 
 9. Projekt uznaje się za złożony, jeżeli w wyznaczonym terminie zostanie opublikowany szczegółowy raport z dowiązaniem do repozytorium kodu (github) oraz zostanie zademonstrowany prowadzącemu na ostatnich zajęciach laboratoryjnych.
+
+
+# Struktura Projektu
+Projekt_PRIR/                     
+├── Dockerfile               
+├── docker-compose.yml    
+|    
+├── engine/                   
+│   ├── Dockerfile            
+│   ├── requirements.txt      
+│   ├── engine_api.py         
+│   └── scraper.py             
+│
+├── flask_app/                
+│   ├── Dockerfile            
+│   ├── requirements.txt      
+│   ├── app.py                
+│   ├── static/               
+│   │   └── css/
+│   │       ├── style_index.css
+│   │       └── style_results.css
+│   └── templates/            
+│       ├── index.html
+│       └── results.html
