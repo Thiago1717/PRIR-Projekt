@@ -20,12 +20,14 @@ Zakres:
 Projekt_PRIR/                     
 ├── Dockerfile               
 ├── docker-compose.yml    
-|    
+│   
+│
 ├── engine/                   
 │   ├── Dockerfile            
 │   ├── requirements.txt      
 │   ├── engine_api.py         
 │   └── scraper.py             
+│
 │
 ├── flask_app/                
 │   ├── Dockerfile            
