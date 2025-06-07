@@ -17,26 +17,25 @@ Zakres:
 ---
 
 ## Struktura Projektu
-Projekt_PRIR/
-├── Dockerfile
-├── docker-compose.yml
+Projekt_PRIR/                     
+├── Dockerfile               
+├── docker-compose.yml    
+|    
+├── engine/                   
+│   ├── Dockerfile            
+│   ├── requirements.txt      
+│   ├── engine_api.py         
+│   └── scraper.py             
 │
-├── engine/
-│ ├── Dockerfile
-│ ├── requirements.txt
-│ ├── engine_api.py
-│ └── scraper.py
-│
-
-└── flask_app/
-├── Dockerfile
-├── requirements.txt
-├── app.py
-├── static/
-│ └── css/
-│ ├── style_index.css
-│ └── style_results.css
-└── templates/
-├── index.html
-└── results.html
+├── flask_app/                
+│   ├── Dockerfile            
+│   ├── requirements.txt      
+│   ├── app.py                
+│   ├── static/               
+│   │   └── css/
+│   │       ├── style_index.css
+│   │       └── style_results.css
+│   └── templates/            
+│       ├── index.html
+│       └── results.html
    
