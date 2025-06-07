@@ -35,7 +35,8 @@ Projekt_PRIR/
 │   │   └── css/
 │   │       ├── style_index.css
 │   │       └── style_results.css
-│   └── templates/            
+│   
+ └── templates/            
 │       ├── index.html
 │       └── results.html
    
