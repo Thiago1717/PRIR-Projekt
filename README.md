@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/1afeeede-3d1c-4be4-a0b3-7bfa1d4ddc9a)# PRIR-Projekt
 
 **Autorzy:**
 *   Oliwier Bogdański (21181)
@@ -28,6 +27,7 @@ Projekt_PRIR/
 │ ├── engine_api.py
 │ └── scraper.py
 │
+
 └── flask_app/
 ├── Dockerfile
 ├── requirements.txt
