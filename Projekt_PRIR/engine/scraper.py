@@ -4,23 +4,18 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient, server_api
 import hashlib
 import os
-import traceback 
+import traceback
 import re
 from concurrent.futures import ProcessPoolExecutor
-import random 
+import random
 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
 DB_NAME = "scraper_db"
-
-
 USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0', 
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36', 
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0'  
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0'
 ]
-
-DEFAULT_PROXY_URL = None
-
 
 def get_mongo_client_and_db():
     try:
@@ -29,29 +24,29 @@ def get_mongo_client_and_db():
         db = client[DB_NAME]
         return client, db
     except Exception as e:
-        print(f"SCRAPER_ERROR: Błąd połączenia/operacji MongoDB: {e}")
+        print(f"BŁĄD_SCRAPERA: Błąd połączenia/operacji MongoDB: {e}")
     return None, None
 
-async def fetch_html_content(session, url, params, proxy_url=None):
+async def fetch_html_content(session, url, params): 
     """Asynchronicznie pobiera zawartość HTML strony, używając losowego User-Agenta."""
     selected_user_agent = random.choice(USER_AGENTS)
     headers = {
         'User-Agent': selected_user_agent,
-        'Accept-Language': 'en-US,en;q=0.9,pl;q=0.8', 
+        'Accept-Language': 'en-US,en;q=0.9,pl;q=0.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
     }
     try:
-        async with session.get(url, params=params, headers=headers, proxy=proxy_url, timeout=aiohttp.ClientTimeout(total=30)) as response:
+        async with session.get(url, params=params, headers=headers, timeout=aiohttp.ClientTimeout(total=30)) as response:
             response.raise_for_status()
             return await response.text()
     except aiohttp.ClientError as e:
-        print(f"SCRAPER_ERROR (fetch_html_content): Błąd aiohttp: {url} (proxy: {proxy_url}) - {e}")
+        print(f"BŁĄD_SCRAPERA (fetch_html_content): Błąd aiohttp: {url} - {e}") 
         return None
     except asyncio.TimeoutError:
-        print(f"SCRAPER_ERROR (fetch_html_content): Timeout: {url} (proxy: {proxy_url})")
+        print(f"BŁĄD_SCRAPERA (fetch_html_content): Timeout: {url}") 
         return None
     except Exception as e:
-        print(f"SCRAPER_ERROR (fetch_html_content): Nieoczekiwany błąd: {url} (proxy: {proxy_url}) - {e}")
+        print(f"BŁĄD_SCRAPERA (fetch_html_content): Nieoczekiwany błąd: {url} - {e}") 
         return None
 
 def parse_single_item_html(item_html_str, query_for_item):
@@ -70,16 +65,12 @@ def parse_single_item_html(item_html_str, query_for_item):
     title_tag = item_soup.select_one(".s-item__title span[role='heading'], .s-item__title")
     title_text = title_tag.get_text(strip=True) if title_tag else None
     if title_text and "Shop on eBay" in title_text: return None
-
     price_tag = item_soup.select_one(".s-item__price")
     price_text = price_tag.get_text(strip=True) if price_tag else None
-    
     link_tag = item_soup.select_one(".s-item__link")
     link_href = link_tag["href"] if link_tag and link_tag.get("href") else None
-
     shipping_tag = item_soup.select_one(".s-item__shipping, .s-item__logisticsCost")
     shipping_text = shipping_tag.get_text(strip=True) if shipping_tag else "N/A"
-    
     location_tag = item_soup.select_one(".s-item__location")
     location_text = location_tag.get_text(strip=True) if location_tag else "Nieznana"
 
@@ -92,15 +83,11 @@ def parse_single_item_html(item_html_str, query_for_item):
 
 async def parse_ebay_page_content_multiproc(html_content, query_for_items, loop, executor):
     if not html_content: return []
-    
     soup = BeautifulSoup(html_content, 'html.parser')
     item_elements_html_str = [str(item) for item in soup.select("li.s-item, div.s-item")]
-    
     if not item_elements_html_str: return []
-    
     tasks = [loop.run_in_executor(executor, parse_single_item_html, item_html, query_for_items) 
              for item_html in item_elements_html_str]
-    
     parsed_item_results = await asyncio.gather(*tasks)
     return [item for item in parsed_item_results if item is not None]
 
@@ -121,7 +108,7 @@ class EbayScraper:
         return name[:100] if name else "default_ebay_collection"
 
     async def scrape_and_save(self, query, min_price, max_price, sort_order_str):
-        if self.db is None: return [], "Database connection failed"
+        if self.db is None: return [], "Błąd połączenia z bazą danych"
 
         request_params = {"_nkw": query}
         if min_price: request_params["_udlo"] = min_price
@@ -133,7 +120,7 @@ class EbayScraper:
         all_parsed_items = []
 
         async with aiohttp.ClientSession() as session:
-            fetch_tasks = [fetch_html_content(session, self.base_url, page_params, proxy_url=DEFAULT_PROXY_URL) 
+            fetch_tasks = [fetch_html_content(session, self.base_url, page_params) 
                            for page_params in pages_to_scrape_params]
             
             html_contents = await asyncio.gather(*fetch_tasks, return_exceptions=True)
@@ -147,7 +134,7 @@ class EbayScraper:
                 parse_tasks.append(parse_ebay_page_content_multiproc(content_or_exception, query, self.loop, self.executor))
             
             if not any_successful_fetch:
-                 return [], "Failed to fetch any content from eBay (all attempts failed)."
+                 return [], "Nie udało się pobrać żadnej zawartości z eBay (wszystkie próby nieudane)."
             
             if parse_tasks:
                 list_of_item_lists = await asyncio.gather(*parse_tasks)
@@ -156,8 +143,8 @@ class EbayScraper:
 
         if not all_parsed_items:
             if any_successful_fetch:
-                return [], "No items found or parsed from successfully fetched eBay pages."
-            return [], "Failed to fetch any content from eBay or no items found."
+                return [], "Nie znaleziono lub nie sparsowano żadnych ofert z pomyślnie pobranych stron eBay."
+            return [], "Nie udało się pobrać żadnej zawartości z eBay lub nie znaleziono ofert."
 
         collection_name = self._sanitize_collection_name(query)
         collection = self.db[collection_name]
@@ -166,10 +153,10 @@ class EbayScraper:
                 for item_data in all_parsed_items:
                     collection.update_one({"_id": item_data["_id"]}, {"$set": item_data}, upsert=True)
         except Exception as e_db:
-            print(f"SCRAPER_ERROR: Błąd zapisu do DB (kolekcja: {collection_name}): {e_db}")
-            return all_parsed_items, f"Scraping completed but DB write error: {e_db}"
+            print(f"BŁĄD_SCRAPERA: Błąd zapisu do DB (kolekcja: {collection_name}): {e_db}")
+            return all_parsed_items, f"Scrapowanie zakończone, ale wystąpił błąd zapisu do DB: {e_db}"
 
-        return all_parsed_items, "Scraping completed successfully"
+        return all_parsed_items, "Scrapowanie zakończone pomyślnie"
     
     def close_connection(self):
         if self.client: self.client.close()
@@ -182,11 +169,11 @@ def run_ebay_scraper(query, min_price, max_price, sort_order):
     
     scraper = EbayScraper(loop, executor)
     items = []
-    message = "Scraping failed (initialization or unexpected error)"
+    message = "Scrapowanie nie powiodło się (błąd inicjalizacji lub nieoczekiwany błąd)"
     
     if scraper.db is None:
-        message = "Database not available for scraper (connection failed during init)."
-        scraper.close_connection()
+        message = "Baza danych niedostępna (błąd połączenia podczas inicjalizacji)."
+        if scraper.client: scraper.close_connection()
         executor.shutdown(wait=False) 
         loop.close()
         return items, message
@@ -194,9 +181,9 @@ def run_ebay_scraper(query, min_price, max_price, sort_order):
     try:
         items, message = loop.run_until_complete(scraper.scrape_and_save(query, min_price, max_price, sort_order))
     except Exception as e:
-        print(f"SCRAPER_FATAL (run_ebay_scraper): Krytyczny błąd wykonania: {e}")
+        print(f"BŁĄD_KRYTYCZNY_SCRAPERA (run_ebay_scraper): Krytyczny błąd wykonania: {e}")
         traceback.print_exc()
-        message = f"Critical internal error during scraping: {str(e)}"
+        message = f"Krytyczny błąd wewnętrzny podczas scrapowania: {str(e)}"
     finally:
         scraper.close_connection()
         executor.shutdown(wait=True) 
