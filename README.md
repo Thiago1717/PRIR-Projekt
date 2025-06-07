@@ -1,8 +1,8 @@
 # PRIR-Projekt
 
-Oliwier Bogdański 21181
-
-Kacper Szponar 21306
+**Autorzy:**
+*   Oliwier Bogdański (21181)
+*   Kacper Szponar (21306)
 
 Zakres:
 1. Aplikacja pobiera, selekcjonuje i składuje  wybranedane o narzuconym profilu z witryn internetowych.
@@ -15,8 +15,9 @@ Zakres:
 8. Oprogramowanie może być zrealizowane w grupie 1 lub 2 osobowej. 
 9. Projekt uznaje się za złożony, jeżeli w wyznaczonym terminie zostanie opublikowany szczegółowy raport z dowiązaniem do repozytorium kodu (github) oraz zostanie zademonstrowany prowadzącemu na ostatnich zajęciach laboratoryjnych.
 
+---
 
-# Struktura Projektu
+## Struktura Projektu
 Projekt_PRIR/                     
 ├── Dockerfile               
 ├── docker-compose.yml    
