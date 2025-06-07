@@ -1,6 +1,7 @@
 # PRIR-Projekt
 
-Oliwier Bogdański 21181,
+Oliwier Bogdański 21181
+
 Kacper Szponar 21306
 
 Zakres:
