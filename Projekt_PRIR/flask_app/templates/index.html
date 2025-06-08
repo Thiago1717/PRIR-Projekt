@@ -122,10 +122,10 @@
                 if (data.status === 'success') {
                     statusMessageDiv.className = 'message success';
                     if (resultsLink && currentQuery) {
-                        // === POCZĄTEK ZMIANY DLA OPCJI 2 ===
+                        
                         const currentSortOrder = document.getElementById('sort_order').value; 
                         resultsLink.href = "{{ url_for('show_results') }}?query=" + encodeURIComponent(currentQuery) + "&sort=" + encodeURIComponent(currentSortOrder);
-                        // === KONIEC ZMIANY DLA OPCJI 2 ===
+                       
                     }
                 } else {
                     statusMessageDiv.className = 'message error';
