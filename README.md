@@ -235,14 +235,15 @@ Plik `docker-compose.yml` konfiguruje działanie wszystkich trzech usług:
     *   Klika "Uruchom Scrapowanie".
 
 2.  **Proces scrapowania:** Aplikacja wyświetla komunikat "Rozpoczynam scrapowanie eBay..." oraz animację ładowania:
+
     ![Proces scrapowania - komunikat i ładowanie](./img/2.png)
 
-3.  **Zakończenie scrapowania:** Wyświetlany jest komunikat o wyniku, np. "Scraping completed successfully Znaleziono ogłoszeń: 20.". Pod komunikatem aktywny staje się link "Zobacz Wyniki":
+4.  **Zakończenie scrapowania:** Wyświetlany jest komunikat o wyniku, np. "Scraping completed successfully Znaleziono ogłoszeń: 20.". Pod komunikatem aktywny staje się link "Zobacz Wyniki":
     ![Zakończenie scrapowania - komunikat o sukcesie](./img/3.png)
 
-4.  **Strona wyników (`results.html`):** Po kliknięciu "Zobacz Wyniki", użytkownik jest przenoszony na stronę z tabelarycznym zestawieniem znalezionych ofert. Wyświetlane są: Tytuł, Cena (tekst), Cena (numeryczna), Wysyłka, Lokalizacja, Link do eBay:
+5.  **Strona wyników (`results.html`):** Po kliknięciu "Zobacz Wyniki", użytkownik jest przenoszony na stronę z tabelarycznym zestawieniem znalezionych ofert. Wyświetlane są: Tytuł, Cena (tekst), Cena (numeryczna), Wysyłka, Lokalizacja, Link do eBay:
     ![Strona wyników - lista ofert](./img/4.png)
-    *   Wyniki mogą być sortowane rosnąco lub malejąco:
+    Wyniki mogą być sortowane rosnąco lub malejąco:
     ![Strona wyników - sortowanie rosnące](./img/5.png)
 
 ## 🗄️ Baza danych MongoDB
