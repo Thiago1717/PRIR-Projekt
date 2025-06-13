@@ -228,6 +228,7 @@ Plik `docker-compose.yml` konfiguruje działanie wszystkich trzech usług:
 ## 🖼️ Interfejs użytkownika - przepływ
 
 1.  **Strona główna (`index.html`):** Użytkownik widzi formularz:
+
     ![Formularz na stronie głównej](./img/1.png)
     *   Wprowadza "Słowo kluczowe" (np. "rtx 5080").
     *   Opcjonalnie "Cena minimalna ($)" i "Cena maksymalna ($)".
@@ -239,9 +240,11 @@ Plik `docker-compose.yml` konfiguruje działanie wszystkich trzech usług:
     ![Proces scrapowania - komunikat i ładowanie](./img/2.png)
 
 4.  **Zakończenie scrapowania:** Wyświetlany jest komunikat o wyniku, np. "Scraping completed successfully Znaleziono ogłoszeń: 20.". Pod komunikatem aktywny staje się link "Zobacz Wyniki":
+
     ![Zakończenie scrapowania - komunikat o sukcesie](./img/3.png)
 
 5.  **Strona wyników (`results.html`):** Po kliknięciu "Zobacz Wyniki", użytkownik jest przenoszony na stronę z tabelarycznym zestawieniem znalezionych ofert. Wyświetlane są: Tytuł, Cena (tekst), Cena (numeryczna), Wysyłka, Lokalizacja, Link do eBay:
+
     ![Strona wyników - lista ofert](./img/4.png)
     
     Wyniki mogą być sortowane rosnąco lub malejąco:
