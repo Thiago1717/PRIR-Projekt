@@ -231,7 +231,7 @@ Plik `docker-compose.yml` konfiguruje działanie wszystkich trzech usług:
 
     ![Formularz na stronie głównej](./img/1.png)
     *   Wprowadza "Słowo kluczowe" (np. "rtx 5080").
-    *   Opcjonalnie "Cena minimalna ($)" i "Cena maksymalna ($)".
+    *   Opcjonalnie "Cena minimalna" i "Cena maksymalna".
     *   Wybiera "Sortuj według ceny produktu" (domyślnie "Malejąco").
     *   Klika "Uruchom Scrapowanie".
 
