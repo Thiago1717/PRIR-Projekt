@@ -243,7 +243,9 @@ Plik `docker-compose.yml` konfiguruje działanie wszystkich trzech usług:
 
 5.  **Strona wyników (`results.html`):** Po kliknięciu "Zobacz Wyniki", użytkownik jest przenoszony na stronę z tabelarycznym zestawieniem znalezionych ofert. Wyświetlane są: Tytuł, Cena (tekst), Cena (numeryczna), Wysyłka, Lokalizacja, Link do eBay:
     ![Strona wyników - lista ofert](./img/4.png)
+    
     Wyniki mogą być sortowane rosnąco lub malejąco:
+    
     ![Strona wyników - sortowanie rosnące](./img/5.png)
 
 ## 🗄️ Baza danych MongoDB
